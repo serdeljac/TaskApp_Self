@@ -93,3 +93,7 @@ button {
 table {
   border-collapse: collapse;
 }
+
+.clearBtn {
+  margin: 6px;
+}
