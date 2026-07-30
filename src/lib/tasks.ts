@@ -12,6 +12,10 @@ export type Task = {
   complete: boolean
 }
 
+// Sort order for priority, and the display text for each.
+export const PRIORITY_RANK: Record<Priority, number> = { high: 0, medium: 1, low: 2 }
+export const PRIORITY_LABEL: Record<Priority, string> = { high: 'High', medium: 'Medium', low: 'Low' }
+
 //This is a guard function to check the quality of information that is in local storage
 //It will be dismissed if the object doesn't meet the specifications
 function toTask(value: unknown): Task | null {

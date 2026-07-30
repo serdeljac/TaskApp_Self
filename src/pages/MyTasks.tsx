@@ -6,16 +6,10 @@ import { useRef, useState, useEffect  } from 'react'
 import type { SubmitEvent } from 'react'
 
 //If commonly used functions, place into a seperate folder
-import { loadTasks, parseDueDate, saveTasks, toDateKey } from '../lib/tasks.ts'
+import { loadTasks, parseDueDate, saveTasks, toDateKey, PRIORITY_RANK, PRIORITY_LABEL } from '../lib/tasks.ts'
 
 //The return types should be in the same folder unless for specific reasons
 import type { Priority, Task } from '../lib/tasks.ts'
-
-// Sort order for priority, and the display text for each.
-const PRIORITY_RANK: Record<Priority, number> = { high: 0, medium: 1, low: 2 }
-const PRIORITY_LABEL: Record<Priority, string> = { high: 'High', medium: 'Medium', low: 'Low' }
-
-
 
 function groupTitle(due: string): string {
   const today = new Date()

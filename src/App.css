@@ -1,16 +1,9 @@
 /*
- * STEP 10 — day cells redesigned to hold a number AND a row of task dots.
- *
- * `.calendar-day` switched from centring everything to a column with
- * `justify-content: space-between`: the number is pinned to the top, the dots
- * row to the bottom, and that holds regardless of how many dots a day has
- * because the dots row is always present in the markup (see Calendar.tsx).
- *
- * `.calendar-day-today` used to fill the whole square with lime — now that the
- * square also holds dots, that would wash them out, so the fill moved onto
- * `.calendar-day-number` alone. `.calendar-day-selected` still rings the whole
- * cell; it marks a different thing (which cell is picked) and reads fine
- * surrounding everything, dots included.
+ * STEP 11 — a `.selected-day-panel` sits below the calendar, listing that
+ * day's tasks. It is styled almost entirely by reusing `.task-group` and
+ * `.task-row` from My Tasks rather than writing new rules — see the comment
+ * further down, next to `.selected-day-panel`, for the two small adjustments
+ * that reuse needed.
  */
 
 :root {
@@ -1164,6 +1157,25 @@ button.calendar-day:focus-visible {
   font-weight: 700;
   line-height: 1;
   color: var(--ink-3);
+}
+
+/*
+ * The selected-day list reuses .task-group/.task-row wholesale from My Tasks —
+ * same rows, same checkbox, same trash button — so a task looks and behaves
+ * identically whichever page it is edited from. Only two adjustments are
+ * needed: spacing below the calendar card (My Tasks gets this for free from
+ * `.task-group + .task-group`, which does not apply here since the sibling
+ * above is `.calendar-card`, not another `.task-group`), and left-aligning
+ * `.empty-note`, whose centred default assumes it is inside `.empty`.
+ */
+.selected-day-panel {
+  margin-top: 18px;
+}
+
+.selected-day-panel .empty-note {
+  margin: 10px 0 0;
+  max-width: none;
+  text-align: left;
 }
 
 /* ---------- responsive ---------- */

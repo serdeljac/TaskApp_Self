@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { loadTasks, parseDueDate, toDateKey } from '../lib/tasks.ts'
-import type { Priority, Task } from '../lib/tasks.ts'
+import { PRIORITY_LABEL, PRIORITY_RANK, loadTasks, parseDueDate, saveTasks, toDateKey } from '../lib/tasks.ts'
+import type { Task } from '../lib/tasks.ts'
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const PRIORITY_RANK: Record<Priority, number> = { high: 0, medium: 1, low: 2 }
 const MAX_DOTS = 3
 
 function startOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
 
 type GridCell = {
@@ -49,20 +52,27 @@ function groupTasksByDate(tasks: Task[]): Map<string, Task[]> {
 
 function Calendar() {
   const [viewDate, setViewDate] = useState(() => startOfMonth(new Date()))
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => startOfDay(new Date()))
+  const [tasks, setTasks] = useState(loadTasks)
+
+  useEffect(() => {
+    saveTasks(tasks)
+  }, [tasks])
 
   const today = new Date()
   const todayKey = toDateKey(today)
   const selectedKey = selectedDate ? toDateKey(selectedDate) : null
-  const tasksByDate = groupTasksByDate(loadTasks())
+  const tasksByDate = groupTasksByDate(tasks)
+  const selectedTasks = selectedKey ? (tasksByDate.get(selectedKey) ?? []) : []
 
   function goToMonth(delta: number) {
     setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + delta, 1))
   }
 
   function goToday() {
-    setViewDate(startOfMonth(new Date()))
-    setSelectedDate(null)
+    const now = new Date()
+    setViewDate(startOfMonth(now))
+    setSelectedDate(startOfDay(now))
   }
 
   function selectDay(date: Date) {
@@ -80,6 +90,16 @@ function Calendar() {
     setViewDate(startOfMonth(picked))
   }
 
+  function toggleComplete(id: string) {
+    setTasks((current) =>
+      current.map((task) => (task.id === id ? { ...task, complete: !task.complete } : task)),
+    )
+  }
+
+  function deleteTask(id: string) {
+    setTasks((current) => current.filter((task) => task.id !== id))
+  }
+
   const monthLabel = viewDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
   const todayLabel = today.toLocaleDateString(undefined, {
     weekday: 'long',
@@ -87,6 +107,9 @@ function Calendar() {
     month: 'long',
     year: 'numeric',
   })
+  const selectedLabel = selectedDate
+    ? selectedDate.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    : null
   const cells = buildMonthGrid(viewDate)
 
   return (
@@ -178,6 +201,50 @@ function Calendar() {
             )
           })}
         </div>
+      </section>
+
+      <section className="card task-group selected-day-panel">
+        <div className="group-head">
+          <h2 className="card-title">{selectedLabel ?? 'No day selected'}</h2>
+          {selectedDate && (
+            <span className="group-date">
+              {selectedTasks.length} task{selectedTasks.length === 1 ? '' : 's'}
+            </span>
+          )}
+        </div>
+
+        {!selectedDate ? (
+          <p className="empty-note">Click a day on the calendar to see its tasks here.</p>
+        ) : selectedTasks.length === 0 ? (
+          <p className="empty-note">No tasks due this day.</p>
+        ) : (
+          selectedTasks.map((task) => (
+            <div className={task.complete ? 'task-row task-row-complete' : 'task-row'} key={task.id}>
+              <input
+                type="checkbox"
+                className="task-check"
+                checked={task.complete}
+                onChange={() => toggleComplete(task.id)}
+                aria-label={task.name}
+              />
+              <div className="task-text">
+                <p className="task-name">{task.name}</p>
+                {task.group && <p className="task-meta">{task.group}</p>}
+              </div>
+              <span className={`prio prio-${task.priority}`}>{PRIORITY_LABEL[task.priority]}</span>
+              <button
+                type="button"
+                className="task-delete"
+                onClick={() => deleteTask(task.id)}
+                aria-label={`Delete ${task.name}`}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16M10 4h4M6.5 7l.9 12.4h9.2L17.5 7M10 11v5.5M14 11v5.5" />
+                </svg>
+              </button>
+            </div>
+          ))
+        )}
       </section>
     </>
   )
