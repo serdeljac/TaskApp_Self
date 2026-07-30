@@ -1,0 +1,8 @@
+<dialog > - Use with useRef, not useState
+show() - When creating tooltip that doesn’t block the interaction.
+Example: tooltip
+
+showModal() - When creating full page modal that doesn’t allow interaction outside of the modal.
+Example - Form
+
+close()

@@ -1,12 +1,15 @@
 /*
- * STEP 02 — one stylesheet, two pages.
+ * STEP 03 — form controls and the modal, added at the bottom of this file.
  *
- * CSS in React is global, not scoped to a component, which is why both pages
- * can reuse .card, .topbar and .page-title without either owning them.
+ * A <dialog> arrives with browser default styling — its own border, padding and
+ * centring — so the .modal rule strips those back before restyling. `::backdrop`
+ * is a pseudo-element the browser creates behind a modal dialog; it cannot be
+ * reached any other way, which is one more thing hand-rolled overlays have to
+ * build themselves.
  *
- * This step changed two things: `.nav-item.active` replaced the hand-written
- * modifier class, because React Router appends `active` to a NavLink itself;
- * and a short task-list block was added at the bottom.
+ * `.radio:has(input:checked)` styles the label from the state of the input
+ * inside it. Before :has() this needed either a wrapper class toggled in JS or
+ * a sibling-selector trick with the input placed before the text.
  */
 
 :root {
@@ -115,7 +118,6 @@
   color: var(--ink);
 }
 
-/* `active` is added by React Router, not written in the JSX. */
 .nav-item.active,
 .nav-item.active:hover {
   background: var(--lime);
@@ -820,6 +822,122 @@
 .prio-medium { background: var(--medium-bg); color: var(--medium-ink); }
 .prio-low    { background: var(--low-bg);    color: var(--low-ink); }
 
+/* ---------- add task modal ---------- */
+
+.modal {
+  width: min(380px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(22, 35, 60, 0.22);
+}
+
+.modal::backdrop {
+  background: rgba(22, 35, 60, 0.45);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* Also used on the <fieldset>, hence the border and padding reset. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.field-label {
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dfe3e9;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.input::placeholder {
+  color: var(--ink-3);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.radio-row {
+  display: flex;
+  gap: 8px;
+}
+
+.radio {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 8px;
+  border: 1px solid #dfe3e9;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.radio input {
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.radio:has(input:checked) {
+  border-color: var(--ink);
+  background: #f6f8fa;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.button-ghost {
+  padding: 6px 15px;
+  border: 1px solid #dfe3e9;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.button-ghost:hover {
+  background: #f5f6f8;
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1120px) {
@@ -857,8 +975,3 @@
     flex-wrap: wrap;
   }
 }
-
-
-/* .testHeader {
-  background: red;
-} */
