@@ -1,33 +1,12 @@
-/*
- * STEP 01 — A flat, static page.
- *
- * Everything below is hard-coded on purpose. There is no state, no props, no
- * arrays, no `.map()`, and no event handlers yet. The whole page is one
- * component that returns markup, so the JSX rules are easy to spot:
- *
- *   1. A component is just a function whose name starts with a capital letter
- *      and which returns markup.
- *   2. That markup must have exactly ONE root element (here: <div className="page">).
- *   3. JSX is not HTML: attributes use camelCase and `class` becomes `className`,
- *      because `class` is a reserved word in JavaScript.
- *   4. Every tag must close. `<img />` and `<br />` are self-closing.
- *   5. Curly braces `{ }` switch from "markup mode" back into "JavaScript mode".
- *      The only place we use that here is the inline bar heights further down.
- *
- * The repetition (7 chart bars, 4 table rows, 6 nav items typed out by hand) is
- * intentional — removing it with `.map()` is a later step, and it lands better
- * once you have felt the repetition.
- */
-
+//This CSS is only for the JSX in THIS component
 import './App.css'
 
-// `function App()` declares the component. `export default App` at the bottom is
-// what lets `main.tsx` do `import App from './App.tsx'`.
+
 function App() {
   return (
     <div className="page">
       <div className="shell">
-        {/* ---------- SIDEBAR ---------- */}
+
         <aside className="sidebar">
           <div className="brand">
             <span className="brand-mark">
@@ -39,8 +18,6 @@ function App() {
           </div>
 
           <nav className="nav">
-            {/* The active item carries a second class. Later this will be driven
-                by state instead of being written into the markup. */}
             <button type="button" className="nav-item nav-item-active">
               <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -106,7 +83,6 @@ function App() {
           </button>
         </aside>
 
-        {/* ---------- MAIN COLUMN ---------- */}
         <main className="main">
           <header className="topbar">
             <div>
@@ -137,7 +113,6 @@ function App() {
           </header>
 
           <div className="layout">
-            {/* ----- LEFT: stats, chart, insights, table ----- */}
             <div className="column">
               <section className="stats">
                 <article className="stat stat-violet">
@@ -184,10 +159,6 @@ function App() {
                     </div>
 
                     <div className="chart-plot">
-                      {/* Each day is a pair of bars: created (violet) and completed
-                          (green). The braces below drop into JavaScript so we can
-                          pass a style object — note the double braces: the outer
-                          pair is "JS goes here", the inner pair is the object. */}
                       <div className="bar-group">
                         <div className="bar bar-violet" style={{ height: '44%' }} />
                         <div className="bar bar-green" style={{ height: '30%' }} />
@@ -305,7 +276,6 @@ function App() {
               </section>
             </div>
 
-            {/* ----- RIGHT: promo, standup, team ----- */}
             <div className="column column-side">
               <section className="promo">
                 <h2 className="promo-title">Upgrade to Pro</h2>
