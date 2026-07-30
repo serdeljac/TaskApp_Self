@@ -1,11 +1,8 @@
 /*
- * STEP 06 — `.task-delete`, the trash button at the end of each row.
- *
- * It sits in the row's normal flex order after the priority badge, so no
- * positioning is involved. It stays visible rather than appearing on hover:
- * hover-only controls are invisible on touch screens and hard to discover.
- * Muted grey by default, and it borrows the High-priority red on hover so the
- * destructive meaning is obvious before the click, not after.
+ * STEP 07 — no new styling. The Dashboard stat cards became functional purely
+ * in Dashboard.tsx; `.stat-note-up` was deleted here because computing a real
+ * percentage removed the last thing that used it — a hand-written "up" colour
+ * for a trend the app has no data to back.
  */
 
 :root {
@@ -334,11 +331,6 @@
   margin-top: 6px;
   font-size: 10.5px;
   color: rgba(22, 35, 60, 0.55);
-}
-
-.stat-note-up {
-  color: #1f7a4d;
-  font-weight: 600;
 }
 
 /* ---------- generic card ---------- */

@@ -1,4 +1,25 @@
+import { loadTasks, toDateKey } from '../lib/tasks.ts'
+
 function Dashboard() {
+  //contains all the tasks from storage
+  const tasks = loadTasks()
+
+  const doneCount = tasks.filter((task) => task.complete).length
+  const totalCount = tasks.length
+
+  const today = new Date()
+  const weekEnd = new Date(today)
+  weekEnd.setDate(today.getDate() + 6)
+  const todayKey = toDateKey(today)
+  const weekEndKey = toDateKey(weekEnd)
+  const dueThisWeekCount = tasks.filter(
+    (task) => !task.complete && task.due >= todayKey && task.due <= weekEndKey,
+  ).length
+
+  const completionRateText =
+    totalCount === 0 ? '0%' : `${((doneCount / totalCount) * 100).toFixed(2)}%`
+  const completionNote = totalCount === 0 ? 'No tasks yet' : `${doneCount} of ${totalCount} tasks done`
+
   return (
     <>
       <header className="topbar">
@@ -37,7 +58,7 @@ function Dashboard() {
                 <span className="stat-dot" />
                 Tasks Completed
               </p>
-              <p className="stat-value">242</p>
+              <p className="stat-value">{doneCount}</p>
               <p className="stat-note">Across all projects</p>
             </article>
 
@@ -46,7 +67,7 @@ function Dashboard() {
                 <span className="stat-dot" />
                 Due This Week
               </p>
-              <p className="stat-value">17</p>
+              <p className="stat-value">{dueThisWeekCount}</p>
               <p className="stat-note">Assigned to you</p>
             </article>
 
@@ -55,8 +76,8 @@ function Dashboard() {
                 <span className="stat-dot" />
                 Completion Rate
               </p>
-              <p className="stat-value">74.86%</p>
-              <p className="stat-note stat-note-up">+6.04% greater than last week</p>
+              <p className="stat-value">{completionRateText}</p>
+              <p className="stat-note">{completionNote}</p>
             </article>
           </section>
 
