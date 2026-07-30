@@ -1,8 +1,16 @@
 /*
- * STEP 07 — no new styling. The Dashboard stat cards became functional purely
- * in Dashboard.tsx; `.stat-note-up` was deleted here because computing a real
- * percentage removed the last thing that used it — a hand-written "up" colour
- * for a trend the app has no data to back.
+ * STEP 10 — day cells redesigned to hold a number AND a row of task dots.
+ *
+ * `.calendar-day` switched from centring everything to a column with
+ * `justify-content: space-between`: the number is pinned to the top, the dots
+ * row to the bottom, and that holds regardless of how many dots a day has
+ * because the dots row is always present in the markup (see Calendar.tsx).
+ *
+ * `.calendar-day-today` used to fill the whole square with lime — now that the
+ * square also holds dots, that would wash them out, so the fill moved onto
+ * `.calendar-day-number` alone. `.calendar-day-selected` still rings the whole
+ * cell; it marks a different thing (which cell is picked) and reads fine
+ * surrounding everything, dots included.
  */
 
 :root {
@@ -1021,6 +1029,141 @@
 
 .button-ghost:hover {
   background: #f5f6f8;
+}
+
+/* ---------- calendar ---------- */
+
+.calendar-card {
+  max-width: 640px;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.calendar-title {
+  min-width: 152px;
+  text-align: center;
+  margin: 0;
+}
+
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-date-input {
+  padding: 8px 10px;
+  border: 1px solid #dfe3e9;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.calendar-date-input:focus-visible {
+  outline: none;
+  border-color: var(--ink);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 18px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  aspect-ratio: 1;
+  padding: 8px 4px 7px;
+  font-size: 13px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
+button.calendar-day {
+  border-radius: 10px;
+}
+
+button.calendar-day:hover {
+  background: #f5f6f8;
+}
+
+button.calendar-day:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.calendar-day.empty {
+  color: transparent;
+}
+
+.calendar-day-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12.5px;
+  line-height: 1;
+}
+
+.calendar-day-today .calendar-day-number {
+  background: var(--lime);
+  font-weight: 700;
+}
+
+.calendar-day-selected {
+  box-shadow: inset 0 0 0 1.8px var(--violet-ink);
+  border-radius: 10px;
+}
+
+.calendar-day-dots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 6px;
+}
+
+.calendar-day-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.calendar-day-dot-high   { background: var(--high-ink); }
+.calendar-day-dot-medium { background: var(--medium-ink); }
+.calendar-day-dot-low    { background: var(--low-ink); }
+
+.calendar-day-more {
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink-3);
 }
 
 /* ---------- responsive ---------- */

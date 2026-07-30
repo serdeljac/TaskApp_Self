@@ -7,6 +7,7 @@ import './App.css'
 import { Routes, Route, NavLink } from 'react-router-dom'
 import Dashboard from './pages/Dashboard.tsx'
 import MyTasks from './pages/MyTasks.tsx'
+import Calendar from './pages/Calendar.tsx'
 
 function App() {
   return (
@@ -41,13 +42,15 @@ function App() {
               My Tasks
             </NavLink>
 
-            <button type="button" className="nav-item">
-              <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="16" rx="3" />
-                <path d="M3 10h18M8 3v4M16 3v4" />
-              </svg>
-              Calendar
-            </button>
+            <NavLink to="/calendar" className="nav-item">
+              <button type="button" className="nav-item">
+                <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="16" rx="3" />
+                  <path d="M3 10h18M8 3v4M16 3v4" />
+                </svg>
+                Calendar
+              </button>
+            </NavLink>
 
             <button type="button" className="nav-item">
               <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
@@ -76,6 +79,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/tasks" element={<MyTasks />} />
+            <Route path="/calendar" element={<Calendar />} />
           </Routes>
         </main>
       </div>
