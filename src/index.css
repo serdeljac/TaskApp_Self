@@ -1,13 +1,52 @@
 /*
- * STEP 01 — global reset and page background.
+ * STEP 01 — global reset, typography and page background.
  * Loaded once from `main.tsx`, so it applies to the whole document.
  * Component-level styling lives in App.css.
+ *
+ * FONT: Poppins is self-hosted through the `@fontsource/poppins` npm package —
+ * Vite bundles the .woff2 files into dist/, so there is no request to Google
+ * Fonts and no dependency on which fonts happen to be installed locally. Only
+ * upright weights are imported; no italic or script face is ever loaded.
+ *
+ * The `latin-` prefix pulls just the Latin subset. The unprefixed entrypoints
+ * also ship Devanagari, which this app never renders — 160 kB of dead weight
+ * in the build output.
+ *
+ * CSS `@import` rules must come before any other rule, so they sit at the very
+ * top. Vite resolves the bare package specifier the same way JavaScript imports
+ * are resolved.
  */
+
+@import '@fontsource/poppins/latin-400.css';
+@import '@fontsource/poppins/latin-500.css';
+@import '@fontsource/poppins/latin-600.css';
+@import '@fontsource/poppins/latin-700.css';
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/*
+ * The font stack is declared on :root, not on body.
+ *
+ * Declaring it only on body leaves the <html> element on the browser's default
+ * font, and any element that does not inherit from body — form controls, and
+ * table internals in some engines — falls back to that default. If the reader
+ * has configured a script or serif default, it leaks into the page. Setting it
+ * at the root and forcing inheritance below removes that whole class of bug.
+ *
+ * The chain ends in `sans-serif`, never `cursive` or `fantasy`, so even a total
+ * load failure degrades to a plain grotesque.
+ */
+:root {
+  --font-sans: 'Poppins', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -18,9 +57,7 @@ body,
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: inherit;
 }
 
 h1,
@@ -30,8 +67,20 @@ figure {
   margin: 0;
 }
 
+/* Form controls and tables do not reliably inherit typography — make them. */
+button,
+input,
+select,
+textarea,
+table,
+th,
+td {
+  font-family: inherit;
+}
+
 button {
-  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
   color: inherit;
   border: 0;
   background: none;

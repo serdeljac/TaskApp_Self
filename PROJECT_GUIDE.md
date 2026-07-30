@@ -19,8 +19,14 @@ to read end-to-end and explain out loud.
 | UI library | React 19                          |
 | Language   | TypeScript                        |
 | Styling    | Plain CSS (`src/App.css`)         |
+| Font       | Poppins, self-hosted via npm      |
 | Linting    | oxlint (`npm run lint`)           |
 | Versioning | Git, one commit per learning step |
+
+The font is the one runtime dependency: `@fontsource/poppins` ships the .woff2
+files, Vite bundles them, and nothing is fetched from Google Fonts at runtime.
+Only upright Latin weights (400/500/600/700) are imported — no italic, no script
+face, no unused language subsets.
 
 No CSS framework, no state library, no router — those get added only when a step
 actually needs them, so the reason for each dependency is obvious.
@@ -95,6 +101,23 @@ Replaced the Vite starter with a static markup-only version of the dashboard.
 
 Deliberately verbose: the seven chart bars, four table rows and six nav items
 are each typed out by hand. Collapsing that repetition is a later lesson.
+
+### step-01 fix — typography and chart grid ✅
+
+Two defects found after the first commit.
+
+1. **Font fell back to the browser default.** The stack was declared on `body`
+   only, so `<html>` stayed on the browser's standard font and anything not
+   inheriting from body — form controls, table internals — went with it. On a
+   machine whose default is a script face, that renders as cursive. Fixed by
+   declaring the stack on `:root`, forcing `font-family: inherit` on controls
+   and table elements, and self-hosting Poppins so nothing depends on which
+   fonts are installed locally. The chain now ends in `sans-serif`, never
+   `cursive`, so even total load failure degrades to a plain grotesque.
+2. **Chart day labels sat in the wrong grid cell.** `.chart` has three children
+   and no explicit placement, so auto-placement put the labels in row 2 /
+   column 1 — the 30px scale column — instead of under the plot. Fixed with
+   explicit `grid-area` on all three.
 
 ### Next candidate steps
 
