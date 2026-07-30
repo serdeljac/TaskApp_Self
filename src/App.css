@@ -1,18 +1,12 @@
 /*
- * STEP 01 — stylesheet for the flat page.
+ * STEP 02 — one stylesheet, two pages.
  *
- * `import './App.css'` at the top of App.tsx is a Vite feature: the bundler sees
- * the import and injects the CSS into the page. It is NOT scoped to the
- * component — these class names are global, which is why they are prefixed by
- * area (nav-, stat-, chart-, promo-).
+ * CSS in React is global, not scoped to a component, which is why both pages
+ * can reuse .card, .topbar and .page-title without either owning them.
  *
- * Design tokens go in :root first so colours are named once and reused. Every
- * value below traces back to the reference image in download.webp.
- *
- * Typography is set once at the root in index.css (Poppins, self-hosted) and
- * inherited from there — no rule in this file names a font family. Poppins is a
- * geometric sans and runs wider than a UI face, so headings and figures carry
- * slightly negative letter-spacing to hold the reference proportions.
+ * This step changed two things: `.nav-item.active` replaced the hand-written
+ * modifier class, because React Router appends `active` to a NavLink itself;
+ * and a short task-list block was added at the bottom.
  */
 
 :root {
@@ -34,6 +28,13 @@
 
   --bar-violet: #c9bdf7;
   --bar-green: #8fd8a8;
+
+  --high-bg: #fdd9d1;
+  --high-ink: #a83a24;
+  --medium-bg: #fbe5bd;
+  --medium-ink: #8a5c0d;
+  --low-bg: #d9e7fd;
+  --low-ink: #2c5ba6;
 
   --r-shell: 30px;
   --r-card: 20px;
@@ -105,6 +106,7 @@
   font-weight: 500;
   color: var(--ink-2);
   text-align: left;
+  text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
 
@@ -113,15 +115,14 @@
   color: var(--ink);
 }
 
-.nav-item-active,
-.nav-item-active:hover {
+/* `active` is added by React Router, not written in the JSX. */
+.nav-item.active,
+.nav-item.active:hover {
   background: var(--lime);
   color: var(--ink);
   font-weight: 600;
 }
 
-/* Icons are inline <svg>. Setting stroke to currentColor makes them inherit the
-   text colour of the button, so the active state recolours icon + label at once. */
 .nav-icon {
   width: 17px;
   height: 17px;
@@ -405,9 +406,6 @@
   column-gap: 10px;
 }
 
-/* All three children are placed explicitly. Left to auto-placement, the day
-   labels drop into row 2 / column 1 — the 30px scale column — instead of
-   sitting under the plot. */
 .chart-scale {
   grid-area: 1 / 1;
   display: flex;
@@ -417,8 +415,6 @@
   color: var(--ink-3);
 }
 
-/* The horizontal guide lines are drawn with a repeating gradient rather than
-   extra elements — fewer nodes, and it scales with the container. */
 .chart-plot {
   grid-area: 1 / 2;
   display: flex;
@@ -590,7 +586,6 @@
   overflow: hidden;
 }
 
-/* Decorative blob standing in for the doodles in the reference image. */
 .promo::after {
   content: '';
   position: absolute;
@@ -753,6 +748,78 @@
   filter: brightness(0.97);
 }
 
+/* ---------- my tasks ---------- */
+
+.tasks {
+  max-width: 760px;
+}
+
+.task-group {
+  padding: 16px 20px 6px;
+}
+
+.task-group + .task-group {
+  margin-top: 16px;
+}
+
+.group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 6px;
+}
+
+.group-date {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.task-check {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1.8px solid #d3dae2;
+  flex-shrink: 0;
+}
+
+.task-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.task-meta {
+  margin-top: 2px;
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+
+.prio {
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.prio-high   { background: var(--high-bg);   color: var(--high-ink); }
+.prio-medium { background: var(--medium-bg); color: var(--medium-ink); }
+.prio-low    { background: var(--low-bg);    color: var(--low-ink); }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1120px) {
@@ -790,3 +857,8 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* .testHeader {
+  background: red;
+} */
