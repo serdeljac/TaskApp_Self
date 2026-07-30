@@ -1,13 +1,11 @@
 /*
- * STEP 05 — `.task-check` grew up from a decorative circle into a styled
- * checkbox, and completed rows get a struck-through name.
+ * STEP 06 — `.task-delete`, the trash button at the end of each row.
  *
- * The trade with `appearance: none` is that it strips the focus ring along with
- * the OS styling, so `:focus-visible` has to put one back explicitly —
- * forgetting that is how custom checkboxes become unusable by keyboard.
- *
- * Row state is a class chosen in the JSX (`task-row task-row-complete`), which
- * keeps the styling decision in CSS rather than as inline styles.
+ * It sits in the row's normal flex order after the priority badge, so no
+ * positioning is involved. It stays visible rather than appearing on hover:
+ * hover-only controls are invisible on touch screens and hard to discover.
+ * Muted grey by default, and it borrows the High-priority red on hover so the
+ * destructive meaning is obvious before the click, not after.
  */
 
 :root {
@@ -836,6 +834,37 @@
 
 .task-row-complete .prio {
   opacity: 0.55;
+}
+
+.task-delete {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--ink-3);
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+
+.task-delete svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.task-delete:hover {
+  background: var(--high-bg);
+  color: var(--high-ink);
+}
+
+.task-delete:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .task-text {

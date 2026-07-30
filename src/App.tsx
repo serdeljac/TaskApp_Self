@@ -51,22 +51,6 @@ function App() {
 
             <button type="button" className="nav-item">
               <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
-                <circle cx="9" cy="8" r="3.2" />
-                <circle cx="17" cy="9" r="2.4" />
-                <path d="M3 19c0-3 2.7-4.6 6-4.6s6 1.6 6 4.6M16 14.6c2.9.2 5 1.8 5 4.4" />
-              </svg>
-              My Team
-            </button>
-
-            <button type="button" className="nav-item">
-              <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
-                <path d="M5 20V11M12 20V5M19 20v-6" strokeLinecap="round" strokeWidth="2.4" />
-              </svg>
-              Reports
-            </button>
-
-            <button type="button" className="nav-item">
-              <svg viewBox="0 0 24 24" className="nav-icon" aria-hidden="true">
                 <circle cx="12" cy="12" r="3.2" />
                 <path d="M12 2.8v2.6M12 18.6v2.6M4.5 12H2M22 12h-2.5M6.2 6.2 4.4 4.4M19.6 19.6l-1.8-1.8M17.8 6.2l1.8-1.8M4.4 19.6l1.8-1.8" />
               </svg>

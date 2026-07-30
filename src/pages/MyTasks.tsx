@@ -69,7 +69,6 @@ function parseDueDate(due: string): Date {
   return new Date(year, month - 1, day)
 }
 
-
 function toDateKey(date: Date): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -116,7 +115,6 @@ function groupByDate(tasks: Task[]) {
 
 
 function MyTasks() {
-
     //This is the dialog box that will open and close
     const dialogRef = useRef<HTMLDialogElement>(null)
     //This is the actual form data within the dialog box
@@ -124,7 +122,7 @@ function MyTasks() {
     //Update the DOM if any changes are made
     const [tasks, setTasks] = useState(loadTasks)
 
-
+    //Used during mutation that will store the new task from the form into the Local Storage
     useEffect(() => {
         try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
@@ -148,10 +146,14 @@ function MyTasks() {
         dialogRef.current?.close()
     }
 
-      function toggleComplete(id: string) {
+    function toggleComplete(id: string) {
         setTasks((current) =>
         current.map((task) => (task.id === id ? { ...task, complete: !task.complete } : task)),
         )
+    }
+
+    function deleteTask(id: string) {
+        setTasks((current) => current.filter((task) => task.id !== id))
     }
 
     function clearStorage () {
@@ -225,10 +227,6 @@ function MyTasks() {
                   className={task.complete ? 'task-row task-row-complete' : 'task-row'}
                   key={task.id}
                 >
-                  {/*
-                    aria-label carries the task name, so a screen reader announces
-                    "Ship the tokens, checkbox, checked" rather than an unnamed box.
-                  */}
                   <input
                     type="checkbox"
                     className="task-check"
@@ -241,6 +239,16 @@ function MyTasks() {
                     {task.group && <p className="task-meta">{task.group}</p>}
                   </div>
                   <span className={`prio prio-${task.priority}`}>{PRIORITY_LABEL[task.priority]}</span>
+                <button
+                    type="button"
+                    className="task-delete"
+                    onClick={() => deleteTask(task.id)}
+                    aria-label={`Delete ${task.name}`}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 7h16M10 4h4M6.5 7l.9 12.4h9.2L17.5 7M10 11v5.5M14 11v5.5" />
+                    </svg>
+                  </button>
                 </div>
               ))}
             </section>
