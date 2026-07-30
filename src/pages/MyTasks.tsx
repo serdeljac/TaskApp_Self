@@ -16,6 +16,7 @@ type Task = {
   group: string
   priority: Priority
   due: string
+  complete: boolean
 }
 
 // Sort order for priority, and the display text for each.
@@ -24,16 +25,30 @@ const PRIORITY_LABEL: Record<Priority, string> = { high: 'High', medium: 'Medium
 
 //This is a guard function to check the quality of information that is in local storage
 //It will be dismissed if the object doesn't meet the specifications
-function isTask(value: unknown): value is Task {
-  if (typeof value !== 'object' || value === null) return false
+function toTask(value: unknown): Task | null {
+  if (typeof value !== 'object' || value === null) return null
   const candidate = value as Record<string, unknown>
-  return (
-    typeof candidate.id === 'string' &&
-    typeof candidate.name === 'string' &&
-    typeof candidate.group === 'string' &&
-    typeof candidate.due === 'string' &&
-    (candidate.priority === 'high' || candidate.priority === 'medium' || candidate.priority === 'low')
-  )
+
+  if (typeof candidate.id !== 'string') return null
+  if (typeof candidate.name !== 'string') return null
+  if (typeof candidate.group !== 'string') return null
+  if (typeof candidate.due !== 'string') return null
+  if (
+    candidate.priority !== 'high' &&
+    candidate.priority !== 'medium' &&
+    candidate.priority !== 'low'
+  ) {
+    return null
+  }
+
+  return {
+    id: candidate.id,
+    name: candidate.name,
+    group: candidate.group,
+    priority: candidate.priority,
+    due: candidate.due,
+    complete: candidate.complete === true,
+  }
 }
 
 //Use Promise to load and check each task in Local Storage, then append
@@ -42,7 +57,8 @@ function loadTasks(): Task[] {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed: unknown = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed.filter(isTask) : []
+    if (!Array.isArray(parsed)) return []
+    return parsed.map(toTask).filter((task) => task !== null)
   } catch {
     return []
   }
@@ -53,7 +69,7 @@ function parseDueDate(due: string): Date {
   return new Date(year, month - 1, day)
 }
 
-// 'yyyy-mm-dd' for a Date, in local time — matches what <input type="date"> gives.
+
 function toDateKey(date: Date): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -98,6 +114,7 @@ function groupByDate(tasks: Task[]) {
 
 
 
+
 function MyTasks() {
 
     //This is the dialog box that will open and close
@@ -131,6 +148,12 @@ function MyTasks() {
         dialogRef.current?.close()
     }
 
+      function toggleComplete(id: string) {
+        setTasks((current) =>
+        current.map((task) => (task.id === id ? { ...task, complete: !task.complete } : task)),
+        )
+    }
+
     function clearStorage () {
         localStorage.clear();
         setTasks(() => []) 
@@ -146,28 +169,32 @@ function MyTasks() {
     const priority: Priority =
       rawPriority === 'medium' || rawPriority === 'low' ? rawPriority : 'high'
 
+    // This is the format of the new task
     const newTask: Task = {
       id: crypto.randomUUID(),
       name: String(data.get('name') ?? '').trim(),
       group: String(data.get('group') ?? '').trim(),
       priority,
       due: String(data.get('due') ?? ''),
+      complete: false
     }
 
+    //Add the new task to the DOM
     setTasks((current) => [...current, newTask])
     form.reset()
     dialogRef.current?.close()
   }
 
   const groups = groupByDate(tasks)
-
+  const doneCount = tasks.filter((task) => task.complete).length
+  
   return (
     <>
       <header className="topbar">
         <div>
           <h1 className="page-title">My Tasks</h1>
           <p className="page-date">
-            {tasks.length === 0 ? 'No tasks yet' : `${tasks.length} task${tasks.length === 1 ? '' : 's'}`}
+            {tasks.length === 0 ? 'No tasks yet' : `${doneCount} of ${tasks.length} complete`}
           </p>
         </div>
 
@@ -194,8 +221,21 @@ function MyTasks() {
               </div>
 
               {group.tasks.map((task) => (
-                <div className="task-row" key={task.id}>
-                  <span className="task-check" />
+                <div
+                  className={task.complete ? 'task-row task-row-complete' : 'task-row'}
+                  key={task.id}
+                >
+                  {/*
+                    aria-label carries the task name, so a screen reader announces
+                    "Ship the tokens, checkbox, checked" rather than an unnamed box.
+                  */}
+                  <input
+                    type="checkbox"
+                    className="task-check"
+                    checked={task.complete}
+                    onChange={() => toggleComplete(task.id)}
+                    aria-label={task.name}
+                  />
                   <div className="task-text">
                     <p className="task-name">{task.name}</p>
                     {task.group && <p className="task-meta">{task.group}</p>}
@@ -207,8 +247,6 @@ function MyTasks() {
           ))
         )}
       </div>
-
-      <button type="button" className="clearBtn pill pill-lime" onClick={clearStorage}>Clear All</button>
 
       <dialog ref={dialogRef} className="modal" aria-labelledby="add-task-title">
         <form ref={formRef} className="modal-form" onSubmit={handleSubmit}>
@@ -257,6 +295,10 @@ function MyTasks() {
           </div>
         </form>
       </dialog>
+
+
+      <button type="button" className="clearBtn pill pill-lime" onClick={clearStorage}>Clear All</button>
+
     </>
   )
 }

@@ -1,15 +1,13 @@
 /*
- * STEP 03 — form controls and the modal, added at the bottom of this file.
+ * STEP 05 — `.task-check` grew up from a decorative circle into a styled
+ * checkbox, and completed rows get a struck-through name.
  *
- * A <dialog> arrives with browser default styling — its own border, padding and
- * centring — so the .modal rule strips those back before restyling. `::backdrop`
- * is a pseudo-element the browser creates behind a modal dialog; it cannot be
- * reached any other way, which is one more thing hand-rolled overlays have to
- * build themselves.
+ * The trade with `appearance: none` is that it strips the focus ring along with
+ * the OS styling, so `:focus-visible` has to put one back explicitly —
+ * forgetting that is how custom checkboxes become unusable by keyboard.
  *
- * `.radio:has(input:checked)` styles the label from the state of the input
- * inside it. Before :has() this needed either a wrapper class toggled in JS or
- * a sibling-selector trick with the input placed before the text.
+ * Row state is a class chosen in the JSX (`task-row task-row-complete`), which
+ * keeps the styling decision in CSS rather than as inline styles.
  */
 
 :root {
@@ -785,12 +783,59 @@
   border-top: 1px solid var(--line);
 }
 
+/*
+ * A real <input type="checkbox">. `appearance: none` removes the OS-drawn box
+ * so it can be a round marker, while the element stays a genuine checkbox for
+ * the keyboard and for screen readers. The tick is drawn with two borders on
+ * ::after rotated 45°, so no icon file is needed.
+ */
 .task-check {
+  appearance: none;
   width: 19px;
   height: 19px;
+  margin: 0;
   border-radius: 50%;
   border: 1.8px solid #d3dae2;
+  background: var(--surface);
   flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.task-check:hover {
+  border-color: var(--ink-3);
+}
+
+.task-check:checked {
+  background: var(--lime);
+  border-color: var(--lime);
+}
+
+.task-check:checked::after {
+  content: '';
+  width: 9px;
+  height: 5px;
+  margin-top: -2px;
+  border-left: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: rotate(-45deg);
+}
+
+/* appearance:none also removes the default focus ring — put one back. */
+.task-check:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.task-row-complete .task-name {
+  color: var(--ink-3);
+  text-decoration: line-through;
+}
+
+.task-row-complete .prio {
+  opacity: 0.55;
 }
 
 .task-text {
@@ -821,6 +866,25 @@
 .prio-high   { background: var(--high-bg);   color: var(--high-ink); }
 .prio-medium { background: var(--medium-bg); color: var(--medium-ink); }
 .prio-low    { background: var(--low-bg);    color: var(--low-ink); }
+
+.empty {
+  padding: 30px 24px;
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.empty-note {
+  max-width: 340px;
+  margin: 6px auto 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
 
 /* ---------- add task modal ---------- */
 
@@ -975,4 +1039,3 @@
     flex-wrap: wrap;
   }
 }
-
